@@ -1,6 +1,7 @@
 import User from "../models/user-model.js";
 import bcrypt from "bcrypt";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   const { username, password, email } = req.body;
@@ -27,7 +28,7 @@ export const signin = async (req, res, next) => {
     if (validPassword === false) {
       return next(errorHandler(401, "Wrong Credentials"));
     }
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUserMail._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = validUserMail._doc;
     res
       .cookie("access_token", token, { httpOnly: true })
