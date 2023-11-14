@@ -29,6 +29,7 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(401, "Wrong Credentials"));
     }
     const token = jwt.sign({ id: validUserMail._id }, process.env.JWT_SECRET);
+    // remove password from json response
     const { password: pass, ...rest } = validUserMail._doc;
     res
       .cookie("access_token", token, { httpOnly: true })
