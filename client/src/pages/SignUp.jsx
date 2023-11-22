@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice.js";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const { loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -20,7 +27,7 @@ export default function SignUp() {
     e.preventDefault();
     try {
       // when loading is true , then it will show loading.... status in front end
-      setLoading(true);
+      dispatch(signInStart);
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
@@ -29,18 +36,15 @@ export default function SignUp() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       if (data.success === false) {
-        setLoading(false);
-        setError(data.message);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setLoading(false);
-      setError(null);
-      navigate("/sign-in");
+      dispatch(signInSuccess(data));
+      navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch(signInFailure(data.message));
     }
   };
   return (
@@ -74,6 +78,7 @@ export default function SignUp() {
         >
           {loading ? "Loading..." : "Sign-Up"}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-3">
         <p>Already have an account ? </p>
