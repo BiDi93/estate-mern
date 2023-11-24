@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import UserRouter from "./routes/user-routes.js";
 import authRouter from "./routes/auth-routes.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.listen(port, () => {
 });
 // in order to sent json object data in post method , need to declare below
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/user", UserRouter);
 app.use("/api/auth", authRouter);
 

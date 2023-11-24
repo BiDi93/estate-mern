@@ -10,6 +10,8 @@ export default function OAuth() {
   const handleGoogleAuth = async () => {
     try {
       const GoogleProvider = new GoogleAuthProvider();
+      // Allow pop up when click sign in with google , even only single account sign in on your chrome
+      GoogleProvider.setCustomParameters({ prompt: "select_account" });
       const Auth = getAuth(app);
 
       const resultGoogle = await signInWithPopup(Auth, GoogleProvider);
