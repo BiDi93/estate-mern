@@ -25,7 +25,7 @@ export default function SignIn() {
     e.preventDefault();
     try {
       // when loading is true , then it will show loading.... status in front end
-      dispatch(signInStart);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {

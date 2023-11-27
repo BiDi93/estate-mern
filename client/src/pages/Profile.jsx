@@ -11,17 +11,22 @@ import {
   updateStart,
   updateSuccess,
   updateFailure,
+  deleteStart,
+  deleteFailure,
+  deleteSuccess,
+  signOutUserStart,
+  signOutUserSuccess,
+  signOutUserFailure,
 } from "../redux/user/userSlice.js";
 import { app } from "../firebase";
 
 function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [formData, setFormData] = useState({});
   const [filePerc, setFilePerc] = useState(0);
   const fileRef = useRef(null);
   const [fileError, setFileError] = useState(false);
-  const { loading, error } = useSelector((state) => state.user);
   const [updateStatus, setUpdateStatus] = useState(false);
   // console.log(filePerc);
 
@@ -36,6 +41,44 @@ function Profile() {
   const handleFormData = (e) => {
     const { value, id } = e.target;
     setFormData({ ...formData, [id]: value });
+  };
+
+  const handleSignOut = async (e) => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/user/signout");
+      const data = await res.json();
+
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+      dispatch(signOutUserSuccess(data));
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  };
+
+  const handleDeleteAction = async (e) => {
+    try {
+      dispatch(deleteStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = res.json();
+      if (data.success === false) {
+        dispatch(deleteFailure(data.message));
+        return;
+      }
+      dispatch(deleteSuccess());
+    } catch (error) {
+      dispatch(deleteFailure(error.message));
+    }
   };
 
   const handleUpdateForm = async (e) => {
@@ -145,8 +188,15 @@ function Profile() {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete</span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span
+          onClick={handleDeleteAction}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign Out
+        </span>
       </div>
       <p className="text-red-600 mt-5">{error ? error : " "}</p>
       <p className="text-green-700 mt-5">

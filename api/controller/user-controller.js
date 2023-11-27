@@ -8,6 +8,28 @@ export const test = (req, res) => {
   });
 };
 
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json("user has been signOut");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(401, "You only delete your own account"));
+  }
+  try {
+    const deleteUserDb = await User.findByIdAndDelete(req.params.id);
+    res.status(200).json("User Deleted Successfully");
+    res.clearCookie("access_token");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only update your own account!"));
