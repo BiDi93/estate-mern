@@ -19,6 +19,7 @@ import {
   signOutUserFailure,
 } from "../redux/user/userSlice.js";
 import { app } from "../firebase";
+import { Link } from "react-router-dom";
 
 function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -186,6 +187,12 @@ function Profile() {
         >
           {loading ? "Updating...." : "Update"}
         </button>
+        <Link
+          className="bg-green-700 text-white uppercase rounded-lg p-3 text-center hover:opacity-80"
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
