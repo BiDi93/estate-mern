@@ -137,6 +137,7 @@ function Profile() {
         <img
           onClick={() => fileRef.current.click()}
           src={formData.avatar || currentUser.avatar}
+          referrerPolicy="no-referrer"
           className="rounded-full h-20 w-20 object-cover cursor-pointer self-center mt-2"
         />
         <p className="text-sm self-center">
