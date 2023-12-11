@@ -144,9 +144,26 @@ function Profile() {
       }
 
       setUserDataListings(data);
-      console.log(userDataListings);
     } catch (error) {
       setShowListingError(true);
+    }
+  };
+
+  const handleDeleteListing = async (listingId) => {
+    try {
+      const res = await fetch(`/api/listing/delete-listing/${listingId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setUserDataListings((prev) =>
+        prev.filter((listing) => listing._id !== listingId)
+      );
+    } catch (error) {
+      console.log(error.message);
     }
   };
   return (
@@ -219,7 +236,7 @@ function Profile() {
           onClick={handleDeleteAction}
           className="text-red-700 cursor-pointer"
         >
-          Delete
+          Delete User
         </span>
         <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
           Sign Out
@@ -261,7 +278,12 @@ function Profile() {
               </Link>
 
               <div className="flex flex-col item-center">
-                <button className="text-red-700 uppercase">Delete</button>
+                <button
+                  onClick={() => handleDeleteListing(listing._id)}
+                  className="text-red-700 uppercase"
+                >
+                  Delete
+                </button>
                 <button className="text-green-700 uppercase">Edit</button>
               </div>
             </div>
