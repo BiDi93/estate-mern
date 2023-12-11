@@ -38,8 +38,10 @@ export default function CreateListing() {
   // this is to track the state change if there is an error while user trying to submit the form
   const [error, setError] = useState(false);
   const nagivate = useNavigate();
+  // this is to track image upload progress
+  const [imageUploadProgress, setImageUploadProgress] = useState(0);
 
-  console.log(formData);
+  // console.log(formData);
 
   // this is basically to submit the form
   const handleSubmitForm = async (e) => {
@@ -159,7 +161,8 @@ export default function CreateListing() {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% complete`);
+          setImageUploadProgress(Math.round(progress));
+          // console.log(`Upload is ${progress}% complete`);
         },
         (error) => {
           reject(error);
@@ -168,6 +171,7 @@ export default function CreateListing() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             resolve(downloadURL);
           });
+          setImageUploadProgress(0);
         }
       );
     });
@@ -350,7 +354,15 @@ export default function CreateListing() {
               {uploading ? "Uploading......" : "Upload"}
             </button>
           </div>
-          <p className="text-red-600">{imageUploadError && imageUploadError}</p>
+          {imageUploadError ? (
+            <span className="text-red-700">{imageUploadError}</span>
+          ) : imageUploadProgress > 0 && imageUploadProgress < 100 ? (
+            <span className="text-slate-500">{`Uploading in progress ${imageUploadProgress}%`}</span>
+          ) : imageUploadProgress === 100 && imageUploadError === false ? (
+            <span className="text-green-500">Upload success</span>
+          ) : (
+            ""
+          )}
 
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
