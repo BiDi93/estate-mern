@@ -72,3 +72,15 @@ export const getUserListing = async (req, res, next) => {
     return next(errorHandler(401, "You can only view your own listing"));
   }
 };
+
+export const getListingData = async (req, res, next) => {
+  try {
+    const listingData = await Listing.findById(req.params.id);
+    if (!listingData) {
+      return next(errorHandler(404, "Listing data not found"));
+    }
+    res.status(200).json(listingData);
+  } catch (error) {
+    next(error);
+  }
+};

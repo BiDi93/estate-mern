@@ -5,11 +5,13 @@ import {
   updateListing,
   deleteListing,
 } from "../controller/listing-controller.js";
+import { getListingData } from "../controller/user-controller.js";
 
 const listingRouter = express.Router();
 
 listingRouter.post("/create", verifyToken, createListing);
 listingRouter.delete("/delete-listing/:id", verifyToken, deleteListing);
 listingRouter.post("/update-listing/:id", verifyToken, updateListing);
+listingRouter.get("/get/:id", getListingData);
 
 export default listingRouter;
