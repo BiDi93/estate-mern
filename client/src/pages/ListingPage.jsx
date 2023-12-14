@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useSelector } from "react-redux";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
+import Contact from "../components/Contact";
+
 import "swiper/css/bundle";
 import {
   FaBath,
@@ -14,12 +17,14 @@ import {
 } from "react-icons/fa";
 
 export default function ListingPage() {
+  const { currentUser } = useSelector((state) => state.user);
   SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [price, setPrice] = useState(0);
+  const [contact, setContact] = useState(false);
+  const [price, setPrice] = useState(null);
   const params = useParams();
   useEffect(() => {
     const fetchListing = async () => {
@@ -34,8 +39,6 @@ export default function ListingPage() {
         }
 
         setListing(data);
-        const resultPrice = listing.regularPrice - listing.discountedPrice;
-        setPrice(resultPrice);
         setLoading(false);
         setError(false);
       } catch (error) {
@@ -43,7 +46,9 @@ export default function ListingPage() {
         console.log(error.message);
         setLoading(false);
       }
+      console.log(listing);
     };
+
     fetchListing();
   }, [params.listingId]);
 
@@ -90,7 +95,7 @@ export default function ListingPage() {
               {listing.name} - ${" "}
               {listing.offer
                 ? listing.discountedPrice.toLocaleString("en-US")
-                : listing.regularPrice.toLocaleString("en-US")}
+                : listing.regularPrice}
               {listing.type === "rent" && " / month"}
             </p>
             <p className="flex items-center mt-6 gap-2 text-slate-600  text-sm">
@@ -103,8 +108,7 @@ export default function ListingPage() {
               </p>
               {listing.offer && (
                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md">
-                  {/* ${+listing.regularPrice - +listing.discountedPrice} */}$
-                  {price.toLocaleString("en-US")}
+                  ${+listing.regularPrice - +listing.discountedPrice}
                 </p>
               )}
             </div>
@@ -134,6 +138,15 @@ export default function ListingPage() {
                 {listing.furnished ? "Furnished" : "Unfurnished"}
               </li>
             </ul>
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
+              <button
+                className="bg-slate-700 rounded-lg uppercase hover:opacity-80 p-3 text-white "
+                onClick={() => setContact(true)}
+              >
+                Contact Landlord
+              </button>
+            )}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
