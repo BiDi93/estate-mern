@@ -323,15 +323,20 @@ export default function EditListing() {
                 value={formData.regularPrice}
                 onChange={handleEventChange}
               />
-              <div>
-                <span>Regular Price</span>
-                <span className="text-xs">( $ / month)</span>
+              <div className="flex flex-col">
+                <span className="text-base">Regular Price</span>
+
+                {formData.type === "rent" ? (
+                  <span className="text-xs">($ / month)</span>
+                ) : (
+                  <span className="text-xs">(in USD )</span>
+                )}
               </div>
             </div>
             {formData.offer && (
-              <div className="flex gap-2 items-center w-3">
+              <div className="flex items-center w-3 gap-3">
                 <input
-                  className=" p-3 border border-gray-300   rounded-lg"
+                  className=" p-3 border border-gray-300 rounded-lg"
                   type="number"
                   id="discountedPrice"
                   min="0"
