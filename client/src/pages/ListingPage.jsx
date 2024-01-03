@@ -46,7 +46,7 @@ export default function ListingPage() {
         console.log(error.message);
         setLoading(false);
       }
-      console.log(listing);
+      // console.log(listing);
     };
 
     fetchListing();
